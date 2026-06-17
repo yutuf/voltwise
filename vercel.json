@@ -7,10 +7,5 @@
       "framework": "nextjs",
       "maxDuration": 30
     }
-  },
-  "functions": {
-    "app/api/**/*.ts": {
-      "maxDuration": 30
-    }
   }
 }
