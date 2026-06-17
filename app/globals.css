@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0a0c0f;
+  --panel: #12151a;
+  --panel2: #1a1f27;
+  --stroke: #2a303a;
+  --txt: #f4f6f8;
+  --muted: #8b95a5;
+  --accent: #ffd400;
+  --green: #22c55e;
+  --blue: #38bdf8;
+}
+
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: "Segoe UI", system-ui, sans-serif;
+}

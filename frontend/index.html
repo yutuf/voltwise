@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voltwise — Hane Enerji Platformu</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <div class="topbar">
+      <div>
+        <div class="logo">Volt<span>wise</span></div>
+        <span class="status-pill" id="apiStatus">API …</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="status-pill" id="userLabel" style="display:none"></span>
+        <button class="btn ghost sm" id="btnAuth">Giriş</button>
+        <button class="btn ghost sm" id="btnSave">Kaydet</button>
+        <button class="tour" id="btnTour" title="Klavye: E">▶ Sunum turu</button>
+        <button class="reset" id="btnReset" title="Klavye: R">↺ Başa dön</button>
+      </div>
+    </div>
+    <div class="hint-bar" id="hintBar">
+      <kbd>E</kbd> sunum turu · <kbd>R</kbd> sıfırla · <kbd>F</kbd> tam ekran · API destekli tam sürüm
+    </div>
+    <p class="tag">Evini kur → kullanımını ayarla → tasarrufunu gör · <span style="color:var(--accent)">Full-Stack · Enerjisa Ready</span></p>
+
+    <div class="steps">
+      <span class="st cur" id="st0">1 Cihaz seç</span>
+      <span class="st" id="st1">2 Kullanımı ayarla</span>
+      <span class="st" id="st2">3 Analiz & tasarruf</span>
+    </div>
+
+    <div class="phase active" id="p1">
+      <h2>Evinde hangi cihazlar var? <span class="sub">tıkla ekle</span></h2>
+      <div class="picker" id="picker"></div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Katalog ve hesap motoru sunucuda — TR tarifesiyle gerçek zamanlı analiz.</p>
+      <button class="btn" id="toP2" disabled>Devam → Kullanımı ayarla</button>
+      <button class="btn ghost" style="margin-left:10px" id="btnTour2">▶ Otomatik sunum turu</button>
+    </div>
+
+    <div class="phase" id="p2">
+      <h2>Günde kaç saat kullanıyorsun?</h2>
+      <div class="devlist" id="devlist"></div>
+      <div style="margin-top:20px;display:flex;gap:10px">
+        <button class="btn ghost" id="btnP2Back">← Geri</button>
+        <button class="btn" id="btnAnalyze">Analiz et →</button>
+      </div>
+    </div>
+
+    <div class="phase" id="p3">
+      <div class="dash-head">
+        <h2 style="margin:0">Enerji analizin</h2>
+        <span class="pill" id="benchPill">—</span>
+      </div>
+      <div class="stripe">
+        <div class="stat"><div class="v acc" id="vTL">0</div><div class="l">TL / ay</div></div>
+        <div class="stat"><div class="v" id="vKwh">0</div><div class="l">kWh / ay</div></div>
+        <div class="stat"><div class="v grn" id="vPot">0</div><div class="l">tasarruf pot.</div></div>
+        <div class="stat"><div class="v bl" id="vCo2">0</div><div class="l">kg CO₂</div></div>
+        <div class="stat"><div class="v" id="vScore">0</div><div class="l">enerji skoru</div><div class="d" id="vScoreD"></div></div>
+        <div class="stat"><div class="v grn" id="vYear">0</div><div class="l">TL / yıl tasarruf</div></div>
+      </div>
+      <div class="dash-grid">
+        <div class="card">
+          <h2>Maliyet dağılımı</h2>
+          <div class="chart-row">
+            <div class="donut" id="donut"><div class="donut-center"><b id="donutTL">0</b>TL/ay</div></div>
+            <div class="leg" id="legend"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Cihaz bazlı harcama</h2>
+          <div class="bars" id="barChart"></div>
+        </div>
+        <div class="card">
+          <h2>Performansın</h2>
+          <div class="score-box">
+            <div class="ring" id="ring"><div class="val" id="ringVal">0</div></div>
+            <div class="score-lbl" id="scoreLbl">—</div>
+            <div class="badges" id="badgeRow"></div>
+          </div>
+          <div class="tariff-mini">
+            <div>Gündüz<b>2,40 ₺</b></div>
+            <div class="night">Gece<b>1,45 ₺</b></div>
+          </div>
+        </div>
+        <div class="card span2">
+          <h2>Akıllı öneriler <span class="sub">tıkla → simülasyona yansır</span></h2>
+          <div id="recos"></div>
+        </div>
+        <div class="card">
+          <h2>Tasarruf simülasyonu</h2>
+          <div class="sim-card">
+            <h3>Önce / sonra</h3>
+            <div class="sim-compare">
+              <div class="sim-col before"><div class="lbl">Mevcut</div><div class="num" id="simBefore">0</div></div>
+              <div class="sim-col after"><div class="lbl">Uygulayınca</div><div class="num" id="simAfter">0</div></div>
+            </div>
+            <div class="delta" id="simDelta">Öneri seç — fark burada görünür</div>
+          </div>
+          <div class="note">Hesap motoru API üzerinde · profil kaydı desteklenir · KVKK uyumlu genişletme hazır.</div>
+        </div>
+      </div>
+      <button class="btn ghost" style="margin-top:16px" id="btnP3Back">← Kullanımı değiştir</button>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="authModal">
+    <div class="modal">
+      <h3>Hesap</h3>
+      <input type="email" id="authEmail" placeholder="E-posta" />
+      <input type="password" id="authPass" placeholder="Şifre (min 6)" />
+      <div class="row">
+        <button class="btn" id="btnLogin">Giriş</button>
+        <button class="btn ghost" id="btnRegister">Kayıt ol</button>
+        <button class="btn ghost" id="btnAuthClose">Kapat</button>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script type="module" src="/assets/app.js"></script>
+</body>
+</html>

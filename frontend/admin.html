@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voltwise — Pilot Dashboard</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+  <style>
+    .admin-wrap{max-width:1100px}
+    .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    @media(max-width:800px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+    .kpi{background:var(--panel);border:1px solid var(--stroke);border-radius:12px;padding:16px}
+    .kpi .n{font-size:28px;font-weight:800;color:var(--accent)}
+    .kpi .l{font-size:11px;color:var(--muted);margin-top:4px}
+    table{width:100%;border-collapse:collapse;font-size:12px}
+    th,td{padding:10px;border-bottom:1px solid var(--stroke);text-align:left}
+    th{color:var(--muted);font-size:10px;text-transform:uppercase}
+    .key-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+    .key-row input{flex:1;min-width:200px;padding:10px;border-radius:8px;border:1px solid var(--stroke);background:var(--panel2);color:var(--txt)}
+    .yes{color:var(--green)}.no{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap admin-wrap">
+    <div class="topbar">
+      <div>
+        <div class="logo">Volt<span>wise</span> <span style="font-size:14px;color:var(--muted)">Pilot</span></div>
+        <p class="tag" style="margin-top:4px">Enerjisa cohort · aggregate demand management KPIs</p>
+      </div>
+      <a href="/" class="btn ghost sm" style="text-decoration:none;display:inline-block">← Uygulama</a>
+    </div>
+
+    <div class="key-row">
+      <input type="password" id="adminKey" placeholder="Admin API key (ADMIN_API_KEY)" />
+      <button class="btn sm" id="btnLoad">Yükle</button>
+    </div>
+
+    <div id="content" style="display:none">
+      <div class="kpi-grid" id="kpis"></div>
+      <div class="card">
+        <h2>Kohort profilleri</h2>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th><th>Ad</th><th>TL/ay</th><th>kWh</th><th>Potansiyel</th><th>Tasarruf</th><th>Skor</th><th>Gece kaydırma</th><th>Güncelleme</th>
+              </tr>
+            </thead>
+            <tbody id="tbl"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <p id="err" style="color:#f87171;font-size:13px"></p>
+  </div>
+  <script type="module">
+    const keyInput = document.getElementById('adminKey');
+    const saved = localStorage.getItem('vw_admin_key');
+    if (saved) keyInput.value = saved;
+
+    document.getElementById('btnLoad').onclick = async () => {
+      const key = keyInput.value.trim();
+      if (!key) return;
+      localStorage.setItem('vw_admin_key', key);
+      document.getElementById('err').textContent = '';
+      try {
+        const r = await fetch('/api/admin/pilot-stats', { headers: { 'X-Admin-Key': key } });
+        if (!r.ok) throw new Error('Geçersiz admin key');
+        const d = await r.json();
+        document.getElementById('content').style.display = 'block';
+        const c = d.cohort, e = d.energy;
+        document.getElementById('kpis').innerHTML = `
+          <div class="kpi"><div class="n">${c.registered_users}</div><div class="l">Kayıtlı kullanıcı</div></div>
+          <div class="kpi"><div class="n">${c.analyzed_profiles}</div><div class="l">Analiz edilen profil</div></div>
+          <div class="kpi"><div class="n">${c.recommendation_adoption_pct}%</div><div class="l">Öneri benimseme</div></div>
+          <div class="kpi"><div class="n">${e.aggregate_saved_tl} ₺</div><div class="l">Toplam tasarruf / ay</div></div>
+          <div class="kpi"><div class="n">${e.estimated_mw_shifted}</div><div class="l">MW eşdeğeri (model)</div></div>
+          <div class="kpi"><div class="n">${e.aggregate_monthly_kwh}</div><div class="l">Toplam kWh / ay</div></div>
+          <div class="kpi"><div class="n">${c.shift_adopters}</div><div class="l">Gece tarifesi kullanan</div></div>
+          <div class="kpi"><div class="n">${e.aggregate_potential_tl} ₺</div><div class="l">Toplam potansiyel</div></div>`;
+        document.getElementById('tbl').innerHTML = d.profiles.map(p => `
+          <tr>
+            <td>${p.id}</td><td>${p.name}</td><td>${Math.round(p.total_tl)}</td><td>${Math.round(p.total_kwh)}</td>
+            <td>${Math.round(p.potential_tl)}</td><td>${Math.round(p.saved_tl)}</td><td>${p.score}</td>
+            <td class="${p.shift_adopted?'yes':'no'}">${p.shift_adopted?'✓':'—'}</td>
+            <td>${p.updated_at.slice(0,10)}</td>
+          </tr>`).join('') || '<tr><td colspan="9">Henüz profil yok</td></tr>';
+      } catch (e) {
+        document.getElementById('err').textContent = e.message;
+        document.getElementById('content').style.display = 'none';
+      }
+    };
+    if (saved) document.getElementById('btnLoad').click();
+  </script>
+</body>
+</html>

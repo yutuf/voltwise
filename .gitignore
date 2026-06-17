@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.vercel/
+.env
+.env*.local
+*.db
+backend/.venv/
+backend/**/__pycache__/
+backend/.pytest_cache/
+backend/voltwise.db
