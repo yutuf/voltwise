@@ -13,9 +13,9 @@ git push -u origin main
 
 ## 2. Deploy on Vercel
 
-1. Go to [vercel.com/new](https://vercel.com/new)
-2. Import your repo — root directory: `voltwise` (or repo root if only voltwise)
-3. Framework: **Next.js** (auto-detected)
+1. Go to [vercel.com/new](https://vercel.com/new) → import **`yutuf/voltwise`**
+2. **Framework preset:** `Services` (required when repo has `vercel.json` → `experimentalServices`)
+3. `vercel.json` is already in the repo — deploys **Next.js only** at `/`
 
 ## 3. Add Neon Postgres (for profiles + auth)
 

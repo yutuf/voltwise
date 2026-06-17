@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "experimentalServices": {
+    "web": {
+      "entrypoint": ".",
+      "routePrefix": "/",
+      "framework": "nextjs",
+      "maxDuration": 30
+    }
+  },
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}

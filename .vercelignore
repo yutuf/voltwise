@@ -1,8 +1,12 @@
 backend/
 frontend/
 legacy/
+.tools/
 *.db
 .env
 .env.local
 .venv/
 __pycache__/
+Dockerfile
+docker-compose.yml
+render.yaml
