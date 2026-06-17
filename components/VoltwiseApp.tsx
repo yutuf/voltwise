@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { AnalysisResult } from "@/lib/calculator";
-import type { DEVICE_CATALOG } from "@/lib/catalog";
+import type { CatalogDevice } from "@/lib/catalog";
 
-type CatalogDevice = (typeof DEVICE_CATALOG)[number] & { h: number };
 type SelectedDevice = CatalogDevice;
 
 async function api<T>(path: string, opts?: RequestInit): Promise<T> {
